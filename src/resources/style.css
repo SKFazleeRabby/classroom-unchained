@@ -1,0 +1,82 @@
+body{
+    font-family: roboto;
+    background-color: #f9f9f9;
+    color: black;
+}
+
+::placeholder, ::-webkit-input-placeholder {
+    color: #eeeeee;
+}
+
+a{
+    text-decoration: none;
+    color: inherit;
+}
+
+textarea{
+    resize: none;
+}
+
+.logo{
+    font-family: 'Pacifico', cursive;
+}
+
+.toolbar__items>.btn, .toolbar__items>.menu .menu__activator .btn{
+    border-radius: 0px;
+}
+
+.input-group__input{
+    border-bottom: 1px solid rgba(0,0,0,0.3);
+}
+
+.btn.btn--disabled{
+    opacity: 0.5;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition-property: opacity;
+  transition-duration: .25s;
+}
+
+.fade-enter-active {
+  transition-delay: .25s;
+}
+
+.fade-enter, .fade-leave-active {
+  opacity: 0
+}
+
+.input-group.input-group--error.input-group--required.input-group--text-field.error--text{
+    color: #d63031;
+}
+
+.card--hover{
+    cursor: auto;
+}
+
+.card__title{
+    display: block;
+}
+
+
+#login .card__title{
+    background-color: #f3f3f3;
+    padding: 0px;
+}
+
+#login .flex.xs6 a>h2{
+    overflow: auto;
+    padding: 20px;
+}
+
+#login a.router-link-exact-active.router-link-active>h2 {
+    background: white;
+}
+
+#login .flex.xs6:first-child{
+    border-right: 1px solid white ;
+}
+
+.parallax__content{
+    background-color: rgba(0,0,0,0.5);
+}
