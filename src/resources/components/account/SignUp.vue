@@ -3,7 +3,7 @@
         <v-container>
             <v-layout row wrap>
                 <v-flex xs8 offset-xs2 class="text-xs-center">
-                    <v-form v-model="valid" ref="form" lazy-validation>
+                    <v-form v-model="valid" ref="register" lazy-validation @submit.prevent="SignUp">
                         <v-text-field
                                 label="First Name"
                                 v-model="first_name"
@@ -34,7 +34,8 @@
                                 required
                         >
                         </v-text-field>
-                        <v-btn :disabled="!valid" flat large class="red accent-1 white--text">Sign Up</v-btn>
+                        <v-btn type="submit" :disabled="!valid" flat large class="red accent-1 white--text">Sign Up
+                        </v-btn>
                     </v-form>
                 </v-flex>
             </v-layout>
@@ -47,7 +48,6 @@
         name: "sign-up",
         data() {
             return {
-                valid: true,
                 first_name: '',
                 last_name: '',
                 email: '',
@@ -65,7 +65,32 @@
                 passwordRules: [
                     v => !!v || 'Password is required',
                     v => (v && v.length >= 8) || 'Password must be at least 8 characters'
-                ]
+                ],
+                errors: null
+            }
+        },
+        methods: {
+            SignUp() {
+                console.log('submitted');
+                let user = {
+                    'first_name': this.first_name,
+                    'last_name': this.last_name,
+                    'email': this.email,
+                    'password': this.password
+                };
+                this.$store.dispatch('registerTeacher', user)
+                    .then(() => {
+                        this.first_name = '';
+                        this.last_name = '';
+                        this.email = '';
+                        this.password = '';
+                        this.$refs.register.reset()
+                    })
+                    .catch(() => {
+                        this.value=true;
+                        this.password = '';
+                        this.$refs.register.reset()
+                    });
             }
         }
     }

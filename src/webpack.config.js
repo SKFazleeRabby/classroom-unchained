@@ -12,7 +12,7 @@ module.exports = {
     entry: './resources/main.js',
     output: {
         path: path.resolve(__dirname, './static'),
-        publicPath: '../static/',
+        publicPath: '/static/',
         filename: 'app.js'
     },
     module: {
@@ -40,7 +40,7 @@ module.exports = {
                 loader: 'file-loader',
                 options: {
                     outputPath: 'images/',
-                    publicPath: '../static/',
+                    publicPath: '/static/images/',
                     name: '[name].[ext]?[hash]',
                 }
             }

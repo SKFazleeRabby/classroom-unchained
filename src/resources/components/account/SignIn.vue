@@ -3,7 +3,7 @@
         <v-container>
             <v-layout row wrap>
                 <v-flex xs8 offset-xs2 class="text-xs-center">
-                    <v-form v-model="valid" ref="form" lazy-validation>
+                    <v-form v-model="valid" ref="signInForm" lazy-validation>
                         <v-text-field
                                 label="Email"
                                 v-model="email"
@@ -22,6 +22,12 @@
                         </v-text-field>
                         <v-btn @click="submit" :disabled="!valid" large flat depressed class="red accent-1 white--text">
                             Login
+                        </v-btn>
+                        <v-btn @click="verify" large flat depressed class="red accent-1 white--text">
+                            Verify
+                        </v-btn>
+                        <v-btn @click="logout" large flat depressed class="red accent-1 white--text">
+                            Logout
                         </v-btn>
                     </v-form>
                 </v-flex>
@@ -49,15 +55,25 @@
         },
         methods: {
             submit() {
-                if (this.$refs.form.validate()) {
-                    axios.post('/api/submit', {
-                        name: this.name,
-                        email: this.email,
-                        select: this.select,
-                        checkbox: this.checkbox
-                    })
+                if (this.$refs.signInForm.validate()) {
+                    let authenticatedData = {
+                        'email': this.email,
+                        'password': this.password
+                    };
+                    this.$store.dispatch('AuthenticateUser', authenticatedData);
+                    // this.$auth.setToken('abc','cde', '123');
+                    this.$refs.signInForm.reset();
                 }
             },
+            verify(){
+                let token = this.$store.state.auth.token;
+                let expire = new Date(this.$store.state.auth.expire);
+                let now = new Date();
+                console.log(expire-now);
+            },
+            logout(){
+                this.$store.dispatch('logoutUser')
+            }
         }
     }
 </script>

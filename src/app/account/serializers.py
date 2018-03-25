@@ -3,15 +3,27 @@ from app.account.models import User, UserDetails
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+
     class Meta:
         model = UserDetails
         fields = ['first_name', 'last_name', 'image']
+
+    def get_image(self, obj):
+        return obj.image.url
+
+
+class AuthenticatedUserSerializer(serializers.ModelSerializer):
+    details = UserDetailSerializer(required=True)
+
+    class Meta:
+        model = User
+        fields = ['id', 'email', 'is_teacher', 'is_student', 'details']
 
 
 class TeacherRegistrationSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(label='First Name', max_length=30, allow_blank=False)
     last_name = serializers.CharField(label='Last Name', max_length=30, allow_blank=False)
-    # password = serializers.CharField(trim_whitespace=True, style={'input_type': 'password'})
 
     class Meta:
         model = User
