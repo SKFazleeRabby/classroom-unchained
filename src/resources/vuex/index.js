@@ -15,7 +15,10 @@ export const store = new Vuex.Store({
             token: localStorage.getItem('token') || null,
             expire: localStorage.getItem('expire') || null,
             user: null
-        }
+        },
+        classrooms: [],
+        classroomDetail: {},
+        lectures:[]
     },
     getters,
     mutations,

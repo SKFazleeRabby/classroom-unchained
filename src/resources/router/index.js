@@ -9,6 +9,7 @@ import Classbar from '../components/classroom/Navbar'
 import Discussion from '../components/classroom/Discussion'
 import Classboard from '../components/classroom/Dashboard'
 import Student from '../components/classroom/Student'
+import Lecture from '../components/classroom/Lecture'
 import Dashboard from '../components/dashboard/Dashboard'
 
 
@@ -54,7 +55,8 @@ export default new Router({
             }
         },
         {
-            path: '/classroom',
+            path: '/classroom/:classroom',
+            redirect: {name: 'Discussion'},
             components: {
                 navbar: Classbar,
                 default: Classboard,
@@ -69,6 +71,11 @@ export default new Router({
                     path: 'students',
                     name: 'Student',
                     component: Student
+                },
+                {
+                    path: 'lectures',
+                    name: 'Lectures',
+                    component: Lecture
                 }
             ]
         }

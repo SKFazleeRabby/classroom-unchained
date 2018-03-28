@@ -8,7 +8,8 @@ urlpatterns = [
     path('api/jwt/refresh/token', refresh_jwt_token),
     path('api/api-auth/', include('rest_framework.urls')),
     path('api/user/', include('app.account.urls')),
-    path('api/classroom/', include('app.classroom.urls'))
+    path('api/classroom/', include('app.classroom.urls')),
+    path('api/post/', include('app.post.urls'))
 ]
 
 if settings.DEBUG:

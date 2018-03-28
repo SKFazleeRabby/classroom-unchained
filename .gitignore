@@ -12,6 +12,7 @@ pyvenv.cfg
 .idea/
 __pycache__/
 .env
+media/
 
 
 */node_modules/
@@ -21,3 +22,4 @@ __pycache__/
 */webpack.prod.js
 */.env
 */package-lock.json
+*/media/

@@ -3,8 +3,8 @@
         <v-parallax src="https://vuetifyjs.com/static/doc-images/parallax/material.jpg" height="350"
                     style="padding: 0px">
             <v-layout column align-center justify-center>
-                <h1>Artificial Intelligence</h1>
-                <h3 class="mt-2">Spring 2018, Section: D</h3>
+                <h1>{{ classroom.title }}</h1>
+                <h3 class="mt-2">{{ classroom.description }}</h3>
             </v-layout>
         </v-parallax>
         <v-toolbar class="white px-5" flat height="70px">
@@ -24,18 +24,27 @@
         data() {
             return {
                 menu: [
-                    {'title': 'Discussions', 'route': '/classroom/discussions'},
-                    {'title': 'Lectures', 'route': '/classroom/lectures'},
-                    {'title': 'Assignments', 'route': '/'},
+                    { 'title': 'Discussions', 'route': { name: 'Discussion' } },
+                    { 'title': 'Lectures', 'route': { name: 'Lectures' } },
+                    {'title': 'Assignments', 'route': { name: 'Assignments' } },
                     {'title': 'Students', 'route': '/classroom/students'}
                 ]
+            }
+        },
+        created() {
+            this.$store.dispatch('getClassroomDetails', this.$route.params.classroom)
+        }
+        ,
+        computed: {
+            classroom() {
+                return this.$store.getters.getClassroomDetail;
             }
         }
     }
 </script>
 
 <style scoped>
-.tab-active{
-    background-color: #eee !important;
-}
+    .tab-active {
+        background-color: #eee !important;
+    }
 </style>

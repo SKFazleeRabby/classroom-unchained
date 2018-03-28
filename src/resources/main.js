@@ -8,7 +8,6 @@ import '../node_modules/vuetify/dist/vuetify.min.css'
 import './style.css'
 
 Vue.use(Vuetify);
-
 Vue.config.devtools=true;
 
 new Vue({
@@ -16,7 +15,9 @@ new Vue({
     router,
     store,
     render: h => h(App),
-    // created() {
-    //     this.$store.dispatch('refreshToken');
-    // }
+    created() {
+        // this.$store.dispatch('refreshToken');
+    }
 });
+
+

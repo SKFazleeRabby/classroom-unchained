@@ -7,7 +7,7 @@
                     <v-icon class="white--text">add</v-icon>
                 </v-btn>
                 <v-layout row wrap>
-                    <v-flex md4 v-for="course in courses" :key="course.title" class="pa-2">
+                    <v-flex md4 v-for="course in courses" :key="course.id" class="pa-2">
                         <v-card hover>
                             <v-card-media src="https://vuetifyjs.com/static/doc-images/parallax/material.jpg"
                                           height="200px">
@@ -38,20 +38,20 @@
                         <h2 class="text-xs-center">Create New Classroom</h2>
                     </v-card-title>
                     <v-container>
-                        <v-form v-model="valid" ref="form" lazy-validation>
+                        <v-form v-model="valid" ref="classroomform" lazy-validation>
                             <v-text-field
                                     label="Title"
-                                    v-model="title"
+                                    v-model="classroom.title"
                                     type="text"
-                                    :rules="titleRules"
+                                    :rules="rules.titleRules"
                                     required
                             >
                             </v-text-field>
                             <v-text-field
                                     label="Description"
-                                    v-model="description"
+                                    v-model="classroom.description"
                                     required
-                                    :rules="descriptionRules"
+                                    :rules="rules.descriptionRules"
                                     type="text"
                             >
                             </v-text-field>
@@ -67,6 +67,18 @@
                     </v-container>
                 </v-card>
             </v-dialog>
+
+            <v-snackbar
+                    bottom
+                    multi-line
+                    timeout="6000"
+                    v-model="snackbar"
+            >
+                {{ snackbarMessage }}
+                <v-btn icon flat color="pink" @click.native="snackbar = false">
+                    <v-icon>close</v-icon>
+                </v-btn>
+            </v-snackbar>
         </v-app>
     </div>
 </template>
@@ -77,24 +89,40 @@
         data() {
             return {
                 dialog: false,
+                snackbar: false,
+                snackbarMessage: '',
                 valid: true,
-                courses: [
-                    {'title': 'Artificial Intelligence', 'description': 'Spring 2018, Section: D', 'enrolled': '32'},
-                    {'title': 'Data Mining', 'description': 'Fall 2017, Section: G', 'enrolled': '14'},
-                    {'title': 'Web Engineering Lab', 'description': 'Spring 2018, Section: D', 'enrolled': '40'},
-                    {'title': 'Introduction to JavaScript', 'description': 'Summer 2016, Section: A', 'enrolled': '4'}
-                ]
+                classroom: {
+                    title: '',
+                    description: ''
+                },
+                rules: {
+                    titleRules: [
+                        v => !!v || 'Title is required.'
+                    ],
+                    descriptionRules: [
+                        v => !!v || 'Description is required.',
+                        v => v.length > 9 || 'Description must be at least 10 characters long.'
+                    ]
+                }
             }
+        },
+        computed: {
+            courses() {
+                return this.$store.getters.getAllClassroom;
+            }
+        },
+        mounted() {
+            this.$store.dispatch('getAllClassroom');
         },
         methods: {
             submit() {
-                if (this.$refs.form.validate()) {
-                    axios.post('/api/submit', {
-                        name: this.name,
-                        email: this.email,
-                        select: this.select,
-                        checkbox: this.checkbox
-                    });
+                if (this.$refs.classroomform.validate()) {
+                    this.$store.dispatch('createClassroom', this.classroom)
+                        .then(() => {
+                            this.snackbarMessage = 'Classroom Has Been Successfully Created.';
+                            this.snackbar = true;
+                        });
                     this.dialog = false;
                 }
             },
