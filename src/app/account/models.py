@@ -62,5 +62,5 @@ class UserDetails(models.Model):
     user = models.OneToOneField(User, related_name='details', on_delete=models.CASCADE)
     first_name = models.CharField(max_length=30, null=False, blank=False)
     last_name = models.CharField(max_length=30, null=False, blank=False)
-    image = models.ImageField(upload_to='profile', default='images/profile_default.jpg')
+    image = models.ImageField(upload_to='profile', default='images/profile_default.png')
 

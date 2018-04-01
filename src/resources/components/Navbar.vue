@@ -71,6 +71,11 @@
                         icon: 'school',
                         title: 'Classroom',
                         route: {name: 'TeacherDashboard'}
+                    },
+                    {
+                        icon: 'school',
+                        title: 'Enrolled',
+                        route: {name: 'StudentDashboard'}
                     }
                 ]
             }

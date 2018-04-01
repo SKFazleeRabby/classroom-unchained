@@ -140,6 +140,18 @@ export default {
         })
     },
 
+    deletePost({commit}, payload) {
+        return new Promise((resolve, reject) => {
+            axios.delete(payload.url).then(response => {
+                commit('deletePost', payload.post_id);
+                resolve();
+            }).catch(error => {
+                console.log(error.response);
+                reject();
+            })
+        });
+    },
+
     createComment({commit}, payload) {
         let comment = {content: payload.comment};
 
@@ -150,4 +162,18 @@ export default {
             console.log(error.response);
         });
     },
+
+    deleteComment({commit}, payload) {
+        let newpayload = {
+            post_id: payload.post_id,
+            comment_id: payload.comment_id
+        };
+        axios.delete(payload.url).then(response => {
+            commit('deleteComment', newpayload);
+            resolve();
+        }).catch(error => {
+            console.log(error.response);
+            reject();
+        })
+    }
 }

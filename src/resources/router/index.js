@@ -12,7 +12,8 @@ import Student from '../components/classroom/Student'
 import Lecture from '../components/classroom/Lecture'
 import Assignment from '../components/classroom/Assignment'
 import Dashboard from '../components/dashboard/Dashboard'
-import {auth} from "../auth/Auth";
+
+import StudentBoard from '../components/student/Enrolled'
 
 Vue.use(Router);
 
@@ -53,6 +54,17 @@ export default new Router({
         {
             path: '/teacher/dashboard',
             name: 'TeacherDashboard',
+            components: {
+                navbar: Navbar,
+                default: Dashboard
+            },
+            meta: {
+                authentication: true
+            }
+        },
+        {
+            path: '/student/dashboard',
+            name: 'StudentDashboard',
             components: {
                 navbar: Navbar,
                 default: Dashboard

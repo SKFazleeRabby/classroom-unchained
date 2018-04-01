@@ -1,4 +1,4 @@
-from rest_framework.generics import CreateAPIView, ListAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView, DestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 
 from app.post.models import Comment, Post
@@ -27,6 +27,15 @@ class ListPostAPIView(ListAPIView):
             .select_related('lecture').prefetch_related('comments')
 
 
+class DeletePostAPIView(DestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    lookup_field = 'id'
+    lookup_url_kwarg = 'post_id'
+
+    def get_queryset(self):
+        return Post.objects.filter(classroom_id=self.kwargs.get('classroom')).filter(user=self.request.user)
+
+
 class CreateCommentAPIView(CreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
@@ -39,9 +48,10 @@ class CreateCommentAPIView(CreateAPIView):
         )
 
 
-class ListCommentAPIView(ListAPIView):
-    serializer_class = CommentSerializer
+class DeleteCommentAPIView(DestroyAPIView):
     permission_classes = [IsAuthenticated]
+    lookup_field = 'id'
+    lookup_url_kwarg = 'comment_id'
 
     def get_queryset(self):
-        return Comment.objects.filter(post_id=self.kwargs.get('post'))
+        return Comment.objects.filter(user=self.request.user).filter(post_id=self.kwargs.get('post'))

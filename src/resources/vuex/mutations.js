@@ -6,7 +6,7 @@ export default {
         axios.defaults.headers.common['Authorization'] = 'jwt ' + state.auth.token;
     },
 
-    isAuthenticated (state) {
+    isAuthenticated(state) {
         state.auth.isAuthenticated = auth.isAuthenticated();
     },
 
@@ -40,7 +40,7 @@ export default {
         state.lectures = payload;
     },
 
-    createNewPost(state, payload){
+    createNewPost(state, payload) {
         state.posts.unshift(payload);
     },
 
@@ -48,12 +48,21 @@ export default {
         state.posts = payload;
     },
 
-    createNewComment(state, payload){
-        state.posts.find(x=> x.id === payload.post).comments.unshift(payload.data);
+    deletePost(state, payload) {
+        state.posts.splice(state.posts.indexOf(state.posts.find(x => x.id === payload)), 1);
+    },
+
+    createNewComment(state, payload) {
+        state.posts.find(x => x.id === payload.post).comments.unshift(payload.data);
+    },
+
+    deleteComment(state, payload) {
+        let post = state.posts.find(x => x.id === payload.post_id);
+        post.comments.splice(post.comments.indexOf(post.comments.find(x => x.id === payload.comment_id)), 1);
     },
 
 
-    logoutUser(state){
+    logoutUser(state) {
         state.auth.token = null;
         state.auth.expire = null;
         state.auth.user = null;

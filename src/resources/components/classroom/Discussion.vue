@@ -72,7 +72,7 @@
                                                 <v-list-tile @click="">
                                                     <v-list-tile-title>Edit</v-list-tile-title>
                                                 </v-list-tile>
-                                                <v-list-tile @click="">
+                                                <v-list-tile @click="deletePost(item.id)">
                                                     <v-list-tile-title>Delete</v-list-tile-title>
                                                 </v-list-tile>
                                             </v-list>
@@ -100,7 +100,7 @@
                                         </v-flex>
                                         <v-flex xs10 class="px-1">
                                             <p class="comment"><span class="username">
-                                                {{ comment.user.details.first_name + comment.user.details.last_name  }}</span>
+                                                {{ comment.user.details.first_name + ' ' + comment.user.details.last_name  }}</span>
                                                 {{ comment.content }}</p>
                                         </v-flex>
                                         <v-flex xs1>
@@ -109,7 +109,7 @@
                                                     <v-icon>more_horiz</v-icon>
                                                 </v-btn>
                                                 <v-list>
-                                                    <v-list-tile @click="">
+                                                    <v-list-tile @click="deleteComment(item.id, comment.id)">
                                                         <v-list-tile-title>Delete</v-list-tile-title>
                                                     </v-list-tile>
                                                 </v-list>
@@ -184,10 +184,33 @@
                     this.$store.dispatch('createPost', new_post).then(() => {
                         this.snackbarMessage = 'Post Has been Created.';
                         this.snackbar = true;
-                        this.newPost.content='';
-                        this.newPost.lecture_id=null;
+                        this.newPost.content = '';
+                        this.newPost.lecture_id = null;
                     });
                 }
+            },
+            deletePost(post_id) {
+                let payload = {
+                    url: 'http://dev.classunchained.com/api/post/' + this.$route.params.classroom + '/'
+                    + post_id + '/delete/',
+                    post_id: post_id
+                };
+                this.$store.dispatch('deletePost', payload).then(() => {
+                    this.snackbarMessage = 'Post Has been Deleted.';
+                    this.snackbar = true;
+                    this.newPost.content = '';
+                    this.newPost.lecture_id = null;
+                });
+            },
+            deleteComment(post_id, comment_id) {
+                let payload = {
+                    url: 'http://dev.classunchained.com/api/post/' + post_id + '/'
+                    + comment_id + '/delete/',
+                    post_id: post_id,
+                    comment_id: comment_id
+                };
+                console.log(payload.url);
+                this.$store.dispatch('deleteComment', payload);
             }
         },
         computed: {
