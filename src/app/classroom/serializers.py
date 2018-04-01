@@ -3,7 +3,6 @@ from app.classroom.models import Classroom, Lecture, Content
 
 
 class TeacherClassroomListSerializers(serializers.ModelSerializer):
-
     class Meta:
         model = Classroom
         fields = ['id', 'title', 'description', 'code', 'created_at']
@@ -11,14 +10,12 @@ class TeacherClassroomListSerializers(serializers.ModelSerializer):
 
 
 class ClassroomDetailsSerializers(serializers.ModelSerializer):
-
     class Meta:
         model = Classroom
         fields = ['title', 'description', 'code', 'created_at']
 
 
 class CreateLectureSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Lecture
         fields = ['title', 'description', 'created_at']
@@ -49,3 +46,8 @@ class LecturesSerializers(serializers.ModelSerializer):
         fields = ['id', 'title', 'description', 'created_at', 'content']
         read_only_fields = ['id', 'content', 'created_at']
 
+
+class ListLecturesSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Lecture
+        fields = ['id', 'title']

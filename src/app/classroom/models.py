@@ -13,12 +13,8 @@ def generate_code():
                                                  '0123456789') for _ in range(7)])
 
 
-def hex_uid():
-    return uuid.uuid4().hex
-
-
 class Classroom(models.Model):
-    id = models.UUIDField(primary_key=True, default=hex_uid, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=100, null=False, blank=False)
     description = models.CharField(max_length=200, null=False, blank=False)
     code = models.CharField(max_length=7, default=generate_code)
@@ -54,4 +50,3 @@ class Content(models.Model):
     content = models.FileField(upload_to=upload_path)
     lecture = models.ForeignKey(Lecture, related_name='content', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now=True)
-

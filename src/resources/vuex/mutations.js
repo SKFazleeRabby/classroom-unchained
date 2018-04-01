@@ -1,8 +1,13 @@
 import axios from "axios/index";
+import {auth} from "../auth/Auth";
 
 export default {
     setAxiosHeader(state) {
         axios.defaults.headers.common['Authorization'] = 'jwt ' + state.auth.token;
+    },
+
+    isAuthenticated (state) {
+        state.auth.isAuthenticated = auth.isAuthenticated();
     },
 
     addAuthErrors(state, payload) {
@@ -34,4 +39,24 @@ export default {
     allLectures(state, payload) {
         state.lectures = payload;
     },
+
+    createNewPost(state, payload){
+        state.posts.unshift(payload);
+    },
+
+    getAllPosts(state, payload) {
+        state.posts = payload;
+    },
+
+    createNewComment(state, payload){
+        state.posts.find(x=> x.id === payload.post).comments.unshift(payload.data);
+    },
+
+
+    logoutUser(state){
+        state.auth.token = null;
+        state.auth.expire = null;
+        state.auth.user = null;
+        state.auth.isAuthenticated = false;
+    }
 }

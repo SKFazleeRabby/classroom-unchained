@@ -6,7 +6,8 @@ from app.classroom.models import Classroom, Lecture, Content
 from app.classroom.serializers import (
     TeacherClassroomListSerializers,
     UploadContentSerializer,
-    LecturesSerializers, ClassroomDetailsSerializers)
+    LecturesSerializers, ClassroomDetailsSerializers,
+    ListLecturesSerializers)
 
 
 class CreateClassroomAPIView(CreateAPIView):
@@ -51,6 +52,15 @@ class AllLecturesAPIView(ListAPIView):
 
     def get_queryset(self):
         return Lecture.objects.filter(classroom_id=self.kwargs.get('classroom')).prefetch_related('content')
+
+
+class ListLecturesAPIView(ListAPIView):
+    serializer_class = ListLecturesSerializers
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Lecture.objects.filter(classroom_id=self.kwargs.get('classroom')).order_by('created_at') \
+            .only('id', 'title')
 
 
 class UploadContentAPIView(CreateAPIView):

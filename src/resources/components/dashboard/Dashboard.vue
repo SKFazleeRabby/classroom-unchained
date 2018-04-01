@@ -3,6 +3,7 @@
         <v-app>
             <v-container>
                 <h1 class="white text-xs-center py-4 mb-4">All Classrooms</h1>
+                <h1 class="text-xs-center my-5" v-if="courses.length < 1">Create Your First Classroom</h1>
                 <v-btn color="indigo" dark bottom right fixed fab @click.stop="dialog=true" slot="activator">
                     <v-icon class="white--text">add</v-icon>
                 </v-btn>
@@ -18,7 +19,7 @@
                             </v-card-title>
                             <v-container>
                                 <v-layout row wrap>
-                                    <v-btn class="indigo white--text">Visit Classroom</v-btn>
+                                    <v-btn class="indigo white--text" @click="visitClassroom(course.id)">Visit Classroom</v-btn>
                                     <v-spacer></v-spacer>
                                     <v-chip color="indigo" text-color="white">
                                         <v-avatar>
@@ -71,7 +72,7 @@
             <v-snackbar
                     bottom
                     multi-line
-                    timeout="6000"
+                    :timeout=6000
                     v-model="snackbar"
             >
                 {{ snackbarMessage }}
@@ -126,6 +127,9 @@
                     this.dialog = false;
                 }
             },
+            visitClassroom (id) {
+                this.$router.push({name: 'Classroom', params:{classroom: id}});
+            }
         }
     }
 </script>

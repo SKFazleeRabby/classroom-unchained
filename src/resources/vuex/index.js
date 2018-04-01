@@ -14,11 +14,13 @@ export const store = new Vuex.Store({
         auth: {
             token: localStorage.getItem('token') || null,
             expire: localStorage.getItem('expire') || null,
-            user: null
+            user: JSON.parse(localStorage.getItem('user')) || null,
+            isAuthenticated: false,
         },
         classrooms: [],
         classroomDetail: {},
-        lectures:[]
+        lectures: [],
+        posts: []
     },
     getters,
     mutations,

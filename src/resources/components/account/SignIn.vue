@@ -26,11 +26,14 @@
                         <v-btn @click="verify" large flat depressed class="red accent-1 white--text">
                             Verify
                         </v-btn>
-                        <v-btn @click="logout" large flat depressed class="red accent-1 white--text">
-                            Logout
-                        </v-btn>
                     </v-form>
                 </v-flex>
+                <v-snackbar :timeout=6000 v-model="snackbar" multi-line bottom>
+                    {{ snackbarMessage }}
+                    <v-btn icon flat color="pink" @click.native="snackbar = false">
+                        <v-icon>close</v-icon>
+                    </v-btn>
+                </v-snackbar>
             </v-layout>
         </v-container>
     </div>
@@ -42,6 +45,8 @@
         data() {
             return {
                 valid: true,
+                snackbar: false,
+                snackbarMessage: '',
                 email: '',
                 password: '',
                 emailRules: [
@@ -60,19 +65,20 @@
                         'email': this.email,
                         'password': this.password
                     };
-                    this.$store.dispatch('AuthenticateUser', authenticatedData);
-                    // this.$auth.setToken('abc','cde', '123');
+                    this.$store.dispatch('AuthenticateUser', authenticatedData).then(() => {
+                        this.$router.push({name: 'TeacherDashboard'});
+                    }).catch(() => {
+                        this.snackbarMessage = 'Email or Password is wrong.';
+                        this.snackbar = true;
+                    });
                     this.$refs.signInForm.reset();
                 }
             },
-            verify(){
+            verify() {
                 let token = this.$store.state.auth.token;
                 let expire = new Date(this.$store.state.auth.expire);
                 let now = new Date();
-                console.log(expire-now);
-            },
-            logout(){
-                this.$store.dispatch('logoutUser')
+                console.log(expire - now);
             }
         }
     }

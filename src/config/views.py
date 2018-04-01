@@ -12,5 +12,3 @@ class AnotherView(View):
        print("IP Address for debug-toolbar: " + request.META['HTTP_X_FORWARDED_FOR'])
        return render(request, 'another.html')
 
-
-

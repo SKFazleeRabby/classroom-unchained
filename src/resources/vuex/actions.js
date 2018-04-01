@@ -24,22 +24,26 @@ export default {
     },
 
     AuthenticateUser({commit}, payload) {
-        auth.login(payload)
-            .then(() => {
-                commit('authenticateUser');
-            })
-            .catch(error => {
-                console.log(error)
-            });
+        return new Promise((resolve, reject) => {
+            auth.login(payload)
+                .then(() => {
+                    commit('authenticateUser');
+                    commit('isAuthenticated');
+                    resolve();
+                })
+                .catch(() => {
+                    reject();
+                });
+        });
     },
 
-    // refreshToken(){
-    //     auth.refreshToken();
-    // },
+    refreshToken() {
+        auth.initialRefreshToken();
+    },
 
-    logoutUser() {
-        console.log("Loggedout");
+    logoutUser({commit}) {
         auth.logout();
+        commit('logoutUser');
     },
 
     createClassroom({commit}, payload) {
@@ -67,7 +71,6 @@ export default {
         axios.get('http://dev.classunchained.com/api/classroom/all/')
             .then(response => {
                 commit('allClassroom', response.data);
-                console.log(response);
             })
             .catch(error => {
                 console.log(error.response)
@@ -96,14 +99,14 @@ export default {
         };
         axios.post('http://dev.classunchained.com/api/classroom/' + classroom + '/lecture/create/',
             lecture).then(response => {
-                commit('createLecture', response.data);
-            })
+            commit('createLecture', response.data);
+        })
             .catch(error => {
                 console.log(error.response);
             })
     },
 
-    getAllLectures ({commit}, payload) {
+    getAllLectures({commit}, payload) {
         axios.get('http://dev.classunchained.com/api/classroom/' + payload + '/lecture/')
             .then(response => {
                 commit('allLectures', response.data);
@@ -111,5 +114,40 @@ export default {
             .catch(error => {
                 console.log(error.response);
             })
-    }
+    },
+
+    createPost({commit}, payload) {
+        let post = {
+            content: payload.content
+        };
+
+        return new Promise((resolve, reject) => {
+            axios.post(payload.url, post).then(response => {
+                commit('createNewPost', response.data);
+                resolve();
+            }).catch(error => {
+                console.log(error.response);
+                reject();
+            })
+        });
+    },
+
+    getAllPost({commit}, payload) {
+        axios.get(payload).then(response => {
+            commit('getAllPosts', response.data);
+        }).catch(error => {
+            console.log(error.response);
+        })
+    },
+
+    createComment({commit}, payload) {
+        let comment = {content: payload.comment};
+
+        axios.post(payload.url, comment).then(response => {
+            let newPayload = {data: response.data, post: payload.post_id};
+            commit('createNewComment', newPayload);
+        }).catch(error => {
+            console.log(error.response);
+        });
+    },
 }

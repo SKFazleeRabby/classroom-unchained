@@ -38,6 +38,12 @@
                         </v-btn>
                     </v-form>
                 </v-flex>
+                <v-snackbar :timeout=6000 v-model="snackbar" multi-line bottom>
+                    {{ snackbarMessage }}
+                    <v-btn icon flat color="pink" @click.native="snackbar = false">
+                        <v-icon>close</v-icon>
+                    </v-btn>
+                </v-snackbar>
             </v-layout>
         </v-container>
     </div>
@@ -48,6 +54,9 @@
         name: "sign-up",
         data() {
             return {
+                snackbar:false,
+                snackbarMessage: '',
+                valid: true,
                 first_name: '',
                 last_name: '',
                 email: '',
@@ -71,7 +80,6 @@
         },
         methods: {
             SignUp() {
-                console.log('submitted');
                 let user = {
                     'first_name': this.first_name,
                     'last_name': this.last_name,
@@ -80,15 +88,11 @@
                 };
                 this.$store.dispatch('registerTeacher', user)
                     .then(() => {
-                        this.first_name = '';
-                        this.last_name = '';
-                        this.email = '';
-                        this.password = '';
+                        this.snackbarMessage = 'Successfully Registered. Please Login To Your Account.'
+                        this.snackbar = true;
                         this.$refs.register.reset()
                     })
                     .catch(() => {
-                        this.value=true;
-                        this.password = '';
                         this.$refs.register.reset()
                     });
             }

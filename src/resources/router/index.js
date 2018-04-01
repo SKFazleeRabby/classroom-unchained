@@ -10,8 +10,9 @@ import Discussion from '../components/classroom/Discussion'
 import Classboard from '../components/classroom/Dashboard'
 import Student from '../components/classroom/Student'
 import Lecture from '../components/classroom/Lecture'
+import Assignment from '../components/classroom/Assignment'
 import Dashboard from '../components/dashboard/Dashboard'
-
+import {auth} from "../auth/Auth";
 
 Vue.use(Router);
 
@@ -33,6 +34,9 @@ export default new Router({
                 default: Account,
                 navbar: Navbar
             },
+            meta: {
+                forVisitor: true
+            },
             children: [
                 {
                     path: 'login',
@@ -47,19 +51,26 @@ export default new Router({
             ]
         },
         {
-            path: '/dashboard',
-            name: 'Dashboard',
+            path: '/teacher/dashboard',
+            name: 'TeacherDashboard',
             components: {
                 navbar: Navbar,
                 default: Dashboard
+            },
+            meta: {
+                authentication: true
             }
         },
         {
-            path: '/classroom/:classroom',
+            path: '/teacher/classroom/:classroom',
             redirect: {name: 'Discussion'},
+            name:'Classroom',
             components: {
                 navbar: Classbar,
                 default: Classboard,
+            },
+            meta: {
+                authentication: true
             },
             children: [
                 {
@@ -76,6 +87,11 @@ export default new Router({
                     path: 'lectures',
                     name: 'Lectures',
                     component: Lecture
+                },
+                {
+                    path: 'assignments',
+                    name: 'Assignments',
+                    component: Assignment
                 }
             ]
         }

@@ -8,46 +8,75 @@
                             <v-expansion-panel-content>
                                 <div slot="header"><h3>Post Your Problem</h3></div>
                                 <v-card class="white">
-                                    <v-container>
-                                        <v-text-field multi-line no-resize placeholder="What's The Problem?">
-                                        </v-text-field>
-                                    </v-container>
-                                    <v-card-actions>
+                                    <v-form ref="postForm" v-model="valid" lazy-validation>
                                         <v-container>
-                                            <v-layout row wrap>
-                                                <v-flex md4 xs12>
-                                                    <v-select :items="select_lectures" v-model="selected_lectures"
-                                                              label="Select"
-                                                              single-line bottom>
-                                                    </v-select>
-                                                </v-flex>
-                                                <v-spacer></v-spacer>
-                                                <v-flex md2 xs12>
-                                                    <v-btn color="indigo" class="white--text mt-3"> Post</v-btn>
-                                                </v-flex>
-                                            </v-layout>
+                                            <v-text-field multi-line no-resize v-model="newPost.content"
+                                                          placeholder="What's The Problem?" counter="500"
+                                                          persistent-hint
+                                                          hint="Problem should be more than 10 characters long">
+                                            </v-text-field>
                                         </v-container>
-                                    </v-card-actions>
+                                        <v-card-actions>
+                                            <v-container>
+                                                <v-layout row wrap>
+                                                    <v-flex md6 xs12>
+                                                        <v-select :items="select_lectures" v-model="newPost.lecture_id"
+                                                                  item-text="title"
+                                                                  item-value="id"
+                                                                  label="Select Related Lecture"
+                                                                  min-width="400"
+                                                                  auto
+                                                                  single-line bottom>
+                                                        </v-select>
+                                                    </v-flex>
+                                                    <v-spacer></v-spacer>
+                                                    <v-flex md2 xs12>
+                                                        <v-btn @click.stop="submit" :disabled="!postButton"
+                                                               color="indigo"
+                                                               class="white--text mt-3"> Post
+                                                        </v-btn>
+                                                    </v-flex>
+                                                </v-layout>
+                                            </v-container>
+                                        </v-card-actions>
+                                    </v-form>
                                 </v-card>
                             </v-expansion-panel-content>
                         </v-expansion-panel>
                     </v-flex>
                 </v-layout>
-                <v-layout column wrap v-for="item in posts" :key="item.content" class="mb-5">
+                <h1 class="text-xs-center" v-if="posts.length < 1"> No Post Yet</h1>
+                <v-layout column wrap v-for="item in posts" :key="item.id" class="mb-5">
                     <v-flex xs6 offset-xs3>
                         <v-card class="white">
                             <v-card-title class="pb-0">
                                 <v-layout fill-height>
                                     <v-flex xs1>
                                         <v-avatar>
-                                            <img :src="item.image" alt="John Doe">
+                                            <img :src="item.user.details.image" alt="John Doe">
                                         </v-avatar>
                                     </v-flex>
-                                    <v-flex xs11 class="px-3 py-1">
-                                        <h3>{{ item.posted_by }} <span class="posted_at grey--text">23 min ago</span>
+                                    <v-flex xs10 class="px-3 py-1">
+                                        <h3>{{ item.user.details.first_name }} {{ item.user.details.last_name }}
+                                            <span class="posted_at grey--text">{{ item.created_at | moment("from")  }}</span>
                                         </h3>
                                         <v-spacer></v-spacer>
-                                        <p class="grey--text">{{ item.lecture }}</p>
+                                        <p class="grey--text">{{ item.lecture.title }}</p>
+                                    </v-flex>
+                                    <v-flex xs1>
+                                        <v-menu offset-y>
+                                            <v-btn icon fab small slot="activator">
+                                                <v-icon>more_horiz</v-icon>
+                                            </v-btn>
+                                            <v-list>
+                                                <v-list-tile @click="">
+                                                    <v-list-tile-title>Edit</v-list-tile-title>
+                                                </v-list-tile>
+                                                <v-list-tile @click="">
+                                                    <v-list-tile-title>Delete</v-list-tile-title>
+                                                </v-list-tile>
+                                            </v-list>
+                                        </v-menu>
                                     </v-flex>
                                 </v-layout>
                             </v-card-title>
@@ -59,37 +88,32 @@
                                 </v-container>
                             </v-card-text>
                             <v-card tile class="grey lighten-3">
-                                <v-card-title class="pb-0">
-                                    <v-layout fill-height>
-                                        <v-flex xs1>
-                                            <v-avatar size="40px" class="pt-3">
-                                                <img src="../../assets/johndoe.jpg" alt="John Doe">
-                                            </v-avatar>
-                                        </v-flex>
-                                        <v-flex xs10 class="px-3">
-                                            <v-text-field placeholder="Write Your Comment..." v-model="comment">
-                                            </v-text-field>
-                                        </v-flex>
-                                        <v-flex xs1>
-                                            <v-btn flat depressed class="comment-btn" fab>
-                                                <v-icon>
-                                                    send
-                                                </v-icon>
-                                            </v-btn>
-                                        </v-flex>
-                                    </v-layout>
-                                </v-card-title>
+                                <v-flex xs12>
+                                    <comment-form :post_id="item.id"></comment-form>
+                                </v-flex>
                                 <v-card-text>
-                                    <v-layout row wrap v-for="comment in item.comments" :key="comment.comment">
+                                    <v-layout row wrap v-for="comment in item.comments" :key="item.id + comment.id">
                                         <v-flex xs1 class="py-1">
                                             <v-avatar size="35px">
-                                                <img :src="comment.image" alt="John Doe">
+                                                <img :src="comment.user.details.image" alt="John Doe">
                                             </v-avatar>
                                         </v-flex>
-                                        <v-flex xs11 class="px-1">
-                                            <p class="comment"><span class="username">{{ comment.commented_by }}</span>
-                                                {{
-                                                comment.comment }}</p>
+                                        <v-flex xs10 class="px-1">
+                                            <p class="comment"><span class="username">
+                                                {{ comment.user.details.first_name + comment.user.details.last_name  }}</span>
+                                                {{ comment.content }}</p>
+                                        </v-flex>
+                                        <v-flex xs1>
+                                            <v-menu offset-y>
+                                                <v-btn icon fab small slot="activator">
+                                                    <v-icon>more_horiz</v-icon>
+                                                </v-btn>
+                                                <v-list>
+                                                    <v-list-tile @click="">
+                                                        <v-list-tile-title>Delete</v-list-tile-title>
+                                                    </v-list-tile>
+                                                </v-list>
+                                            </v-menu>
                                         </v-flex>
                                     </v-layout>
                                 </v-card-text>
@@ -97,53 +121,82 @@
                         </v-card>
                     </v-flex>
                 </v-layout>
+                <v-snackbar
+                        bottom
+                        multi-line
+                        :timeout=6000
+                        v-model="snackbar"
+                >
+                    {{ snackbarMessage }}
+                    <v-btn icon flat color="pink" @click.native="snackbar = false">
+                        <v-icon>close</v-icon>
+                    </v-btn>
+                </v-snackbar>
             </v-container>
         </v-app>
     </div>
 </template>
 
 <script>
+    import axios from 'axios'
+    import CommentForm from './Comment'
+
     export default {
         name: "lecture",
+        components: {
+            'comment-form': CommentForm
+        },
         data() {
             return {
-                selected_lectures: null,
-                select_lectures: [
-                    {text: 'Lecture 1'},
-                    {text: 'Lecture 2'},
-                    {text: 'Lecture 3'},
-                    {text: 'Lecture 4'},
-                    {text: 'Lecture 5'},
-                    {text: 'Lecture 6'},
-                    {text: 'Lecture 7'}
-                ],
+                valid: true,
+                newPost: {
+                    content: '',
+                    lecture_id: null
+                },
+                select_lectures: [],
                 comment: '',
-                posts: [
-                    {
-                        'posted_by': 'Asif Mahmud Shuvo',
-                        'image': '/static/images/johndoe.jpg',
-                        'lecture': 'lecture1',
-                        'content': 'Lorem ipsum dolor sit amet, at aliquam vivendum vel, everti delicatissimi cu eos Dico iuvaret debitis mel an, et cum zril menandri. Eum in consul legimus accusam. Ea dico abhorreant duo, quo illum minimum incorrupte no.',
-                        'comments': [
-                            {
-                                'commented_by': 'Ahmad Ali Sany',
-                                'image': '/static/images/johndoe.jpg',
-                                'comment': 'This Post Sucks'
-                            },
-                            {
-                                'commented_by': 'SK. Fazlee Rabby',
-                                'image': '/static/images/johndoe.jpg',
-                                'comment': 'This is no way to post a problem. Please come to class regularly to understand the contents.'
-                            }
-                        ]
-                    },
-                    {
-                        'posted_by': 'Ahmad Ali Sany',
-                        'image': '/static/images/johndoe.jpg',
-                        'lecture': 'lecture1',
-                        'content': 'Lorem ipsum dolor sit amet, at aliquam vivendum vel, everti delicatissimi cu eos Dico iuvaret debitis mel an, et cum zril menandri. Eum in consul legimus accusam. Ea dico abhorreant duo, quo illum minimum incorrupte no.',
-                    }
-                ]
+                snackbar: false,
+                snackbarMessage: ''
+            }
+        },
+        created() {
+            axios.get('http://dev.classunchained.com/api/classroom/' + this.$route.params.classroom + '/lecture/list/')
+                .then(response => {
+                    this.select_lectures = response.data;
+                })
+                .catch(error => {
+                    console.log(error.response);
+                });
+        },
+        mounted() {
+            let url = 'http://dev.classunchained.com/api/post/' + this.$route.params.classroom + '/post';
+            this.$store.dispatch('getAllPost', url);
+        },
+        methods: {
+            submit() {
+                if (this.$refs.postForm.validate()) {
+                    let new_post = {
+                        content: this.newPost.content,
+                        url: 'http://dev.classunchained.com/api/post/' + this.$route.params.classroom + '/' +
+                        this.newPost.lecture_id.toString() + '/post/'
+                    };
+
+                    this.$store.dispatch('createPost', new_post).then(() => {
+                        this.snackbarMessage = 'Post Has been Created.';
+                        this.snackbar = true;
+                        this.newPost.content='';
+                        this.newPost.lecture_id=null;
+                    });
+                }
+            }
+        },
+        computed: {
+            postButton() {
+                return this.newPost.content.length > 10 &&
+                    this.newPost.lecture_id != null;
+            },
+            posts() {
+                return this.$store.getters.getAllPosts;
             }
         }
     }
@@ -181,9 +234,10 @@
         padding: 0px;
         height: 90px;
     }
-    .expansion-panel--inset .expansion-panel__container, .expansion-panel--popout .expansion-panel__container{
+
+    .expansion-panel--inset .expansion-panel__container, .expansion-panel--popout .expansion-panel__container {
         max-width: 100%;
         padding: 5px;
-        background-color: #f5f5f5!important;
+        background-color: #f5f5f5 !important;
     }
 </style>

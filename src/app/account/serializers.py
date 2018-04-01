@@ -10,7 +10,8 @@ class UserDetailSerializer(serializers.ModelSerializer):
         fields = ['first_name', 'last_name', 'image']
 
     def get_image(self, obj):
-        return obj.image.url
+        request = self.context.get('request')
+        return request.build_absolute_uri(obj.image.url)
 
 
 class AuthenticatedUserSerializer(serializers.ModelSerializer):
